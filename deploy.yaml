@@ -1,0 +1,228 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Creates a static website using S3 and CloudFront for deploying Merchant Center Custom Applications",
+    "Parameters": {
+        "BucketName": {
+            "Type": "String",
+            "Description": "The name for the bucket hosting your website"
+        }
+    },
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "Website Configuration"
+                    },
+                    "Parameters": [
+                        "BucketName"
+                    ]
+                }
+            ],
+            "ParameterLabels": {
+                "BucketName": {
+                    "default": "S3 Bucket Name"
+                }
+            }
+        },
+        "AWS::CloudFormation::Designer": {
+            "21536d00-1314-4a1e-a98a-26b8d7207fc6": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 300,
+                    "y": 210
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "0c1ae1d9-61ec-4b3a-9a50-0030e36a4850": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 170,
+                    "y": 210
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "40fa15a9-ab01-4186-b51f-5af5840b0a34": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 300,
+                    "y": 340
+                },
+                "z": 1,
+                "embeds": [],
+                "isassociatedwith": [
+                    "21536d00-1314-4a1e-a98a-26b8d7207fc6"
+                ]
+            }
+        }
+    },
+    "Resources": {
+        "WebsiteBucket": {
+            "Properties": {
+                "BucketName": {
+                    "Ref": "BucketName"
+                },
+                "WebsiteConfiguration": {
+                    "IndexDocument": "index.html"
+                },
+                "CorsConfiguration": {
+                    "CorsRules": [
+                        {
+                            "AllowedHeaders": [
+                                "*"
+                            ],
+                            "AllowedMethods": [
+                                "GET"
+                            ],
+                            "AllowedOrigins": [
+                                "*"
+                            ],
+                            "Id": "OpenCors",
+                            "MaxAge": "3600"
+                        }
+                    ]
+                }
+            },
+            "Type": "AWS::S3::Bucket",
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "21536d00-1314-4a1e-a98a-26b8d7207fc6"
+                }
+            }
+        },
+        "WebsiteBucketPolicy": {
+            "Properties": {
+                "Bucket": {
+                    "Ref": "WebsiteBucket"
+                },
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": "*",
+                            "Action": "s3:GetObject",
+                            "Resource": {
+                                "Fn::Sub": "arn:aws:s3:::${WebsiteBucket}/*"
+                            }
+                        }
+                    ]
+                }
+            },
+            "Type": "AWS::S3::BucketPolicy",
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "40fa15a9-ab01-4186-b51f-5af5840b0a34"
+                }
+            }
+        },
+        "WebsiteCloudFront": {
+            "Type": "AWS::CloudFront::Distribution",
+            "DependsOn": [
+                "WebsiteBucket"
+            ],
+            "Properties": {
+                "DistributionConfig": {
+                    "Origins": [
+                        {
+                            "DomainName": {
+                                "Fn::GetAtt": [
+                                    "WebsiteBucket",
+                                    "RegionalDomainName"
+                                ]
+                            },
+                            "Id": {
+                                "Ref": "WebsiteBucket"
+                            },
+                            "CustomOriginConfig": {
+                                "HTTPPort": "80",
+                                "HTTPSPort": "443",
+                                "OriginProtocolPolicy": "http-only"
+                            }
+                        }
+                    ],
+                    "Enabled": "true",
+                    "DefaultRootObject": "index.html",
+                    "DefaultCacheBehavior": {
+                        "TargetOriginId": {
+                            "Ref": "WebsiteBucket"
+                        },
+                        "ViewerProtocolPolicy": "redirect-to-https",
+                        "AllowedMethods": [
+                            "GET",
+                            "HEAD",
+                            "OPTIONS"
+                        ],
+                        "CachedMethods": [
+                            "GET",
+                            "HEAD",
+                            "OPTIONS"
+                        ],
+                        "Compress": false,
+                        "ForwardedValues": {
+                            "QueryString": "true",
+                            "Cookies": {
+                                "Forward": "none"
+                            },
+                            "Headers": [
+                                "Access-Control-Request-Headers",
+                                "Access-Control-Request-Method",
+                                "Origin"
+                            ]
+                        }
+                    },
+                    "PriceClass": "PriceClass_100",
+                    "ViewerCertificate": {
+                        "CloudFrontDefaultCertificate": "true"
+                    },
+                    "CustomErrorResponses": [
+                        {
+                            "ErrorCode": 404,
+                            "ResponseCode": 200,
+                            "ResponsePagePath": "/index.html"
+                        },
+                        {
+                            "ErrorCode": 403,
+                            "ResponseCode": 200,
+                            "ResponsePagePath": "/index.html"
+                        }
+                    ]
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "0c1ae1d9-61ec-4b3a-9a50-0030e36a4850"
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "S3WebsiteURL": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "WebsiteBucket",
+                    "WebsiteURL"
+                ]
+            }
+        },
+        "CloudFrontDomain": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "WebsiteCloudFront",
+                    "DomainName"
+                ]
+            }
+        }
+    }
+}
