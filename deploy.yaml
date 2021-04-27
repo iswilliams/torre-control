@@ -115,10 +115,6 @@ Resources:
                 - ''
                 - - origin-access-identity/cloudfront/
                   - !Ref CloudFrontOAI
-            CustomOriginConfig:
-              HTTPPort: '80'
-              HTTPSPort: '443'
-              OriginProtocolPolicy: http-only
         Enabled: 'true'
         DefaultRootObject: index.html
         DefaultCacheBehavior:
