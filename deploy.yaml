@@ -83,10 +83,8 @@ Resources:
         Statement:
           - Sid: '1'
             Effect: Allow
-            Principal: null
-            CanonicalUser: !GetAtt 
-              - CloudFrontOAI
-              - S3CanonicalUserId
+            Principal:
+              CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
             Action: 's3:GetObject'
             Resource: 'arn:aws:s3:::${WebsiteBucket}/*'
     Type: 'AWS::S3::BucketPolicy'
