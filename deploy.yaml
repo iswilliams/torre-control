@@ -41,7 +41,7 @@ Metadata:
         height: 60
       position:
         x: 300
-        'y': 320
+        'y': 330
       z: 1
       embeds: []
       isassociatedwith:
@@ -52,10 +52,84 @@ Metadata:
         height: 60
       position:
         x: 180
-        'y': 320
+        'y': 330
       z: 1
       embeds: []
+    274df6ab-f76f-4163-b4b8-34da988e3911:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -60
+        'y': 330
+      z: 1
+      embeds: []
+    6acc5ead-32c3-4c73-8c87-f91dc45ef50b:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -60
+        'y': 210
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - 274df6ab-f76f-4163-b4b8-34da988e3911
+    f5f0e224-6eef-4c41-ba1a-f727f73effab:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 50
+        'y': 210
+      z: 1
+      embeds: []
+      isassociatedwith:
+        - 6acc5ead-32c3-4c73-8c87-f91dc45ef50b
 Resources:
+  AndinaIPSetWhitelist:
+    Type: 'AWS::WAF::IPSet'
+    Properties:
+      Name: IPSet for whitelisted IP adresses
+      IPSetDescriptors:
+        - Type: IPV4
+          Value: 186.105.9.0/24
+        - Type: IPV4
+          Value: 181.42.160.0/24
+        - Type: IPV4
+          Value: 181.42.161.0/24
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 274df6ab-f76f-4163-b4b8-34da988e3911
+  AndinaIPSetRule:
+    Type: 'AWS::WAF::Rule'
+    Properties:
+      Name: AndinaIPSetRule
+      MetricName: AndinaIPSetRule
+      Predicates:
+        - DataId:
+            Ref: AndinaIPSetWhitelist
+          Negated: false
+          Type: IPMatch
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6acc5ead-32c3-4c73-8c87-f91dc45ef50b
+  CloudFrontACL:
+    Type: 'AWS::WAF::WebACL'
+    Properties:
+      Name: WebACL to block Whitelisted IP addresses
+      DefaultAction:
+        Type: BLOCK
+      MetricName: CloudFrontACL
+      Rules:
+        - Action:
+            Type: ALLOW
+          Priority: 1
+          RuleId:
+            Ref: AndinaIPSetRule
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f5f0e224-6eef-4c41-ba1a-f727f73effab
   WebsiteBucket:
     Properties:
       BucketName: !Ref BucketName
@@ -109,6 +183,8 @@ Resources:
       - WebsiteBucket
     Properties:
       DistributionConfig:
+        WebACLId:
+          Ref: CloudFrontACL
         Origins:
           - DomainName: !GetAtt 
               - WebsiteBucket
