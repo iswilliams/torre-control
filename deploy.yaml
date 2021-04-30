@@ -93,6 +93,10 @@ Resources:
       Name: IPSet for whitelisted IP adresses
       IPSetDescriptors:
         - Type: IPV4
+          Value: 190.100.210.0/24
+        - Type: IPV4
+          Value: 190.22.44.18.0/24
+        - Type: IPV4
           Value: 186.105.14.0/24
         - Type: IPV4
           Value: 181.42.160.0/24
