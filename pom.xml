@@ -7,10 +7,10 @@
   <artifactId>sonarscanner-maven-basic</artifactId>
   <version>1.0-SNAPSHOT</version>
   
-  <name>Front-End</name>
+  <name>Front-End-Test</name>
 
 <properties>
-  <sonar.projectKey>DemoProjectISW</sonar.projectKey>
+  <sonar.projectKey>Front-End-Test</sonar.projectKey>
   <sonar.organization>iswilliams</sonar.organization>
   <sonar.sources>.</sonar.sources>
   <sonar.language>ts</sonar.language>
