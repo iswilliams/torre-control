@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --prod --output-hashing=none --base-href ./",
+    "build": "ng build --prod --output-hashing=none --base-href /",
     "test": "ng test --browsers ChromeHeadless --code-coverage true",
     "lint": "ng lint",
     "e2e": "ng e2e"
