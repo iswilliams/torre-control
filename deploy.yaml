@@ -6,6 +6,7 @@ Parameters:
   BucketName:
     Type: String
     Description: The name for the bucket hosting your website
+    Default: TPE-FE-TorreControl
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
