@@ -177,13 +177,20 @@ Resources:
             Action:
               - 's3:Get*'
               - 's3:Put*'
-            Resource: 'arn:aws:s3:::tpe-artifacts/*'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref WebsiteBucket
+                - /*
           - Sid: ''
             Effect: Allow
             Principal:
               AWS: 'arn:aws:iam::409275239275:root'
             Action: 's3:ListBucket'
-            Resource: 'arn:aws:s3:::tpe-artifacts'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref WebsiteBucket
     Type: 'AWS::S3::BucketPolicy'
     Metadata:
       'AWS::CloudFormation::Designer':
