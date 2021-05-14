@@ -112,8 +112,7 @@ Resources:
       Name: AndinaIPSetRule
       MetricName: AndinaIPSetRule
       Predicates:
-        - DataId:
-            Ref: AndinaIPSetWhitelist
+        - DataId: !Ref AndinaIPSetWhitelist
           Negated: false
           Type: IPMatch
     Metadata:
@@ -130,8 +129,7 @@ Resources:
         - Action:
             Type: ALLOW
           Priority: 1
-          RuleId:
-            Ref: AndinaIPSetRule
+          RuleId: !Ref AndinaIPSetRule
     Metadata:
       'AWS::CloudFormation::Designer':
         id: f5f0e224-6eef-4c41-ba1a-f727f73effab
@@ -163,13 +161,29 @@ Resources:
           - Sid: '1'
             Effect: Allow
             Principal:
-              CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+              CanonicalUser: !GetAtt 
+                - CloudFrontOAI
+                - S3CanonicalUserId
             Action: 's3:GetObject'
             Resource: !Join 
               - ''
               - - 'arn:aws:s3:::'
                 - !Ref WebsiteBucket
                 - /*
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::409275239275:root'
+            Action:
+              - 's3:Get*'
+              - 's3:Put*'
+            Resource: 'arn:aws:s3:::tpe-artifacts/*'
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::409275239275:root'
+            Action: 's3:ListBucket'
+            Resource: 'arn:aws:s3:::tpe-artifacts'
     Type: 'AWS::S3::BucketPolicy'
     Metadata:
       'AWS::CloudFormation::Designer':
@@ -188,8 +202,7 @@ Resources:
       - WebsiteBucket
     Properties:
       DistributionConfig:
-        WebACLId:
-          Ref: CloudFrontACL
+        WebACLId: !Ref CloudFrontACL
         Origins:
           - DomainName: !GetAtt 
               - WebsiteBucket
