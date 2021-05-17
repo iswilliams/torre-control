@@ -98,11 +98,11 @@ Resources:
         - Type: IPV4
           Value: 190.22.44.0/24
         - Type: IPV4
-          Value: 186.105.14.0/24
-        - Type: IPV4
           Value: 181.42.160.0/24
         - Type: IPV4
-          Value: 181.42.161.0/24
+          Value: 169.254.235.0/24
+        - Type: IPV4
+          Value: 96.230.30.0/24
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 274df6ab-f76f-4163-b4b8-34da988e3911
@@ -175,8 +175,7 @@ Resources:
             Principal:
               AWS: 'arn:aws:iam::409275239275:root'
             Action:
-              - 's3:Get*'
-              - 's3:Put*'
+              - 's3:*'
             Resource: !Join 
               - ''
               - - 'arn:aws:s3:::'
@@ -186,7 +185,7 @@ Resources:
             Effect: Allow
             Principal:
               AWS: 'arn:aws:iam::409275239275:root'
-            Action: 's3:ListBucket'
+            Action: 's3:*'
             Resource: !Join 
               - ''
               - - 'arn:aws:s3:::'
